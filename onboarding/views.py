@@ -1915,44 +1915,39 @@ def sign_in(request):
 # ============================================================
 # 18. DRIVER DASHBOARD
 # ============================================================
-
-@login_required(
-    login_url="sign_in"
-)
+@login_required(login_url="sign_in")
 def dashboard(request):
 
-    application = get_object_or_404(
-        DriverApplication,
-        user=request.user,
-    )
+    # Staff/admin accounts are management accounts,
+    # not driver accounts.
+    if request.user.is_staff:
+        return redirect("admin:index")
 
-    # The database stores "Submitted".
-    # Drivers see the friendlier wording "Under review".
+    try:
+        application = DriverApplication.objects.get(
+            user=request.user
+        )
+    except DriverApplication.DoesNotExist:
+        return redirect("choose_transport")
+
+    # Database stores "Submitted".
+    # Driver sees "Under review".
     if application.status == "Submitted":
-
         display_status = "Under review"
-
     else:
-
         display_status = application.status
 
     return render(
         request,
         "onboarding/dashboard.html",
         {
-            "application":
-                application,
-
-            "display_status":
-                display_status,
-
-            "age":
-                calculate_age(
-                    application.date_of_birth
-                ),
+            "application": application,
+            "display_status": display_status,
+            "age": calculate_age(
+                application.date_of_birth
+            ),
         },
     )
-
 
 # ============================================================
 # 19. SIGN OUT
