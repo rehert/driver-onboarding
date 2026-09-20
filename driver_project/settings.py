@@ -75,6 +75,9 @@ ALLOWED_HOSTS = [
     "localhost",
     "driver-onboarding-production.up.railway.app",
 ]
+CSRF_TRUSTED_ORIGINS = [
+    "https://driver-onboarding-production.up.railway.app",
+]
 
 
 # ============================================================
