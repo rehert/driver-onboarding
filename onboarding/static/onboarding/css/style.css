@@ -656,3 +656,8 @@ a {
         font-size: 34px;
     }
 }
+.transport-card input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
