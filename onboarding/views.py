@@ -18,7 +18,6 @@ from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.conf import settings
 from django.http import FileResponse, Http404
-from django.core.mail import send_mail
 
 from django.db import transaction
 
@@ -32,6 +31,7 @@ from django.utils import timezone
 from django.views.decorators.http import require_POST
 
 from .models import DriverApplication
+from .email_service import send_project_email
 
 
 # ============================================================
@@ -283,16 +283,13 @@ def send_registration_otp(request, email):
     )
 
     try:
-        send_mail(
+        send_project_email(
             subject="Driver Registration One Time Password",
             message=(
                 f"Your verification code is {otp}. "
                 f"It expires in {OTP_EXPIRY_SECONDS} seconds."
             ),
-            from_email="rehertemmanuel@gmail.com",
-            recipient_list=[email],
-            using="default",
-            fail_silently=False,
+            recipient=email,
         )
 
     except Exception:

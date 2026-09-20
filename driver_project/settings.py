@@ -272,41 +272,29 @@ LOGIN_URL = "sign_in"
 
 # ============================================================
 # 17. EMAIL
-# Gmail App Password remains in an environment variable.
+# Production email is sent through Resend's HTTPS API.
+# The API key is stored only in an environment variable.
 # ============================================================
 
-DEFAULT_FROM_EMAIL = (
-    "rehertemmanuel@gmail.com"
+DEFAULT_FROM_EMAIL = os.environ.get(
+    "RESEND_FROM_EMAIL",
+    "Driver Onboarding <onboarding@resend.dev>",
 )
 
+RESEND_API_KEY = os.environ.get("RESEND_API_KEY", "")
+
+# Keep Gmail SMTP available only as a local-development fallback.
+# Railway production email does NOT depend on SMTP.
 MAILERS = {
-
     "default": {
-
-        "BACKEND":
-            "django.core.mail.backends.smtp.EmailBackend",
-
+        "BACKEND": "django.core.mail.backends.smtp.EmailBackend",
         "OPTIONS": {
-
-            "host":
-                "smtp.gmail.com",
-
-            "port":
-                587,
-
-            "username":
-                "rehertemmanuel@gmail.com",
-
-            "password":
-                os.environ.get(
-                    "GMAIL_APP_PASSWORD"
-                ),
-
-            "use_tls":
-                True,
-
-            "timeout":
-                10,
+            "host": "smtp.gmail.com",
+            "port": 587,
+            "username": "rehertemmanuel@gmail.com",
+            "password": os.environ.get("GMAIL_APP_PASSWORD"),
+            "use_tls": True,
+            "timeout": 10,
         },
     },
 }
