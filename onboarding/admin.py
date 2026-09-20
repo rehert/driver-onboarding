@@ -612,3 +612,6 @@ class DriverApplicationAdmin(admin.ModelAdmin):
                 ),
                 level=messages.WARNING,
             )
+admin.site.site_header = "Courier Driver Management"
+admin.site.site_title = "Courier Driver Management | Admin"
+admin.site.index_title = "Driver Application Management"
