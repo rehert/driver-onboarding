@@ -18,7 +18,7 @@ from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.conf import settings
 from django.http import FileResponse, Http404
-from django.core.mail import send_mail
+from .email_service import send_project_email
 
 from django.db import transaction
 
@@ -283,19 +283,22 @@ def send_registration_otp(request, email):
     )
 
     try:
-        send_mail(
+        send_project_email(
             subject="Driver Registration One Time Password",
             message=(
                 f"Your verification code is {otp}. "
                 f"It expires in {OTP_EXPIRY_SECONDS} seconds."
             ),
-            from_email="rehertemmanuel@gmail.com",
-            recipient_list=[email],
-            using="default",
-            fail_silently=False,
+            recipient=email,
         )
 
-    except Exception:
+    except Exception as exc:
+        # Safe diagnostic: logs the provider error, never the API key or OTP.
+        print(
+            f"OTP email send failed for {email}: "
+            f"{type(exc).__name__}: {exc}",
+            flush=True,
+        )
         return (
             "The verification email could not be sent. "
             "Please try again."
