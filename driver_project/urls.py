@@ -12,16 +12,16 @@ Class-based views
     2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
 Including another URLconf
     1. Import the include() function: from django.urls import include, path
+from onboarding import views as onboarding_views
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 # ============================================================
 # 1. IMPORTS
 # ============================================================
 
-from django.conf import settings
-from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
+from onboarding import views as onboarding_views
 
 
 # ============================================================
@@ -37,23 +37,9 @@ urlpatterns = [
     ),
 
     # Driver website
-    path(
-        "",
-        include("onboarding.urls"),
-    ),
+    path("", include("onboarding.urls")),
+    path("media/<path:file_path>", onboarding_views.protected_media, name="protected_media"),
 ]
 
 
-# ============================================================
-# 3. LOCAL MEDIA FILES
-
-# Only used while DEBUG=True.
-# ============================================================
-
-if settings.DEBUG:
-
-    urlpatterns += static(
-        settings.MEDIA_URL,
-        document_root=settings.MEDIA_ROOT,
-    )
 

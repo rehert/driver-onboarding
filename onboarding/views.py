@@ -16,6 +16,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 
 from django.core.exceptions import ValidationError
+from django.conf import settings
+from django.http import FileResponse, Http404
 from django.core.mail import send_mail
 
 from django.db import transaction
@@ -480,6 +482,48 @@ def find_missing_application_fields(application):
 
     return missing
 
+
+
+# ============================================================
+# PROTECTED UPLOADED FILES
+# Drivers may open only their own files. Staff may review all.
+# ============================================================
+
+@login_required(login_url="sign_in")
+def protected_media(request, file_path):
+    media_root = Path(settings.MEDIA_ROOT).resolve()
+    requested_file = (media_root / file_path).resolve()
+
+    try:
+        requested_file.relative_to(media_root)
+    except ValueError:
+        raise Http404("File not found.")
+
+    if not requested_file.is_file():
+        raise Http404("File not found.")
+
+    if not request.user.is_staff:
+        application = DriverApplication.objects.filter(user=request.user).first()
+        if application is None:
+            raise Http404("File not found.")
+
+        allowed_names = {
+            getattr(application, field).name
+            for field in (
+                "id_photo",
+                "licence_photo",
+                "front_vehicle_photo",
+                "rear_vehicle_photo",
+                "cargo_area_photo",
+                "vehicle_registration_document",
+                "applicant_portrait",
+            )
+            if getattr(application, field)
+        }
+        if file_path not in allowed_names:
+            raise Http404("File not found.")
+
+    return FileResponse(open(requested_file, "rb"))
 
 # ============================================================
 # 8. HOME PAGE
@@ -1888,10 +1932,12 @@ def sign_in(request):
                 user,
             )
 
-            application = get_object_or_404(
-                DriverApplication,
-                user=user,
-            )
+            if user.is_staff:
+                return redirect("admin:index")
+
+            application = DriverApplication.objects.filter(user=user).first()
+            if application is None:
+                return redirect("choose_transport")
 
             # Draft applicants resume where they stopped.
             if application.status == "Draft":

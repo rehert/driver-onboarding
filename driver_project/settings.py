@@ -29,13 +29,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # 3. SECURITY
 # ============================================================
 
-DEBUG = (
-    os.environ.get(
-        "DEBUG",
-        "True",
-    ).lower()
-    == "true"
-)
+DEBUG = os.environ.get("DEBUG", "True").lower() == "true"
 
 
 # For local development we allow a temporary development key.
@@ -237,12 +231,17 @@ USE_TZ = True
 # CSS will later go here.
 # ============================================================
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-STATICFILES_DIRS = [
-    BASE_DIR / "onboarding" / "static",
-]
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 # ============================================================
 # 14. USER UPLOADS
