@@ -1,0 +1,6 @@
+Django==6.1.1
+Pillow
+gunicorn
+whitenoise
+dj-database-url
+psycopg[binary]
