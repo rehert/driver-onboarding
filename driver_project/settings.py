@@ -71,9 +71,9 @@ allowed_hosts_environment = os.environ.get(
 )
 
 ALLOWED_HOSTS = [
-    host.strip()
-    for host in allowed_hosts_environment.split(",")
-    if host.strip()
+    "127.0.0.1",
+    "localhost",
+    "driver-onboarding-production.up.railway.app",
 ]
 
 
