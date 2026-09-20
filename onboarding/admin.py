@@ -4,7 +4,7 @@
 
 from django import forms
 from django.contrib import admin, messages
-from django.core.mail import send_mail
+from .email_service import send_project_email
 from django.utils import timezone
 from django.utils.html import format_html
 
@@ -444,15 +444,10 @@ class DriverApplicationAdmin(admin.ModelAdmin):
 
         try:
 
-            send_mail(
+            send_project_email(
                 subject=subject,
                 message=message,
-                from_email="rehertemmanuel@gmail.com",
-                recipient_list=[
-                    application.user.email
-                ],
-                using="default",
-                fail_silently=False,
+                recipient=application.user.email,
             )
 
         except Exception as error:

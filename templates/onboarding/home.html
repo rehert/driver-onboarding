@@ -34,6 +34,12 @@
             <a href="{% url 'sign_in' %}" class="btn btn-outline">
                 Sign In
             </a>
+
+            {% if request.user.is_authenticated and request.user.is_staff %}
+                <a href="{% url 'admin:index' %}" class="btn btn-outline">
+                    Management / Admin
+                </a>
+            {% endif %}
         </div>
     </section>
 </div>
