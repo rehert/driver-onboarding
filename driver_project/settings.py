@@ -102,6 +102,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
 
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
 
     "django.contrib.sessions.middleware.SessionMiddleware",
 
@@ -238,14 +239,11 @@ USE_TZ = True
 # ============================================================
 
 STATIC_URL = "static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
 STATICFILES_DIRS = [
     BASE_DIR / "onboarding" / "static",
 ]
-
-STATIC_ROOT = (
-    BASE_DIR / "staticfiles"
-)
-
 
 # ============================================================
 # 14. USER UPLOADS
