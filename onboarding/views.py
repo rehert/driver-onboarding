@@ -18,6 +18,7 @@ from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.conf import settings
 from django.http import FileResponse, Http404
+from django.core.mail import send_mail
 
 from django.db import transaction
 
@@ -31,7 +32,6 @@ from django.utils import timezone
 from django.views.decorators.http import require_POST
 
 from .models import DriverApplication
-from .email_service import send_project_email
 
 
 # ============================================================
@@ -283,13 +283,16 @@ def send_registration_otp(request, email):
     )
 
     try:
-        send_project_email(
+        send_mail(
             subject="Driver Registration One Time Password",
             message=(
                 f"Your verification code is {otp}. "
                 f"It expires in {OTP_EXPIRY_SECONDS} seconds."
             ),
-            recipient=email,
+            from_email="rehertemmanuel@gmail.com",
+            recipient_list=[email],
+            using="default",
+            fail_silently=False,
         )
 
     except Exception:
@@ -528,6 +531,15 @@ def protected_media(request, file_path):
 
 def home(request):
 
+    # Staff users stay on the homepage so they can see
+    # the Management / Admin link.
+    if request.user.is_authenticated and request.user.is_staff:
+        return render(
+            request,
+            "onboarding/home.html",
+        )
+
+    # Normal authenticated drivers go to their dashboard.
     if request.user.is_authenticated:
         return redirect("dashboard")
 
