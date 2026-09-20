@@ -1,0 +1,110 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driver Dashboard</title>
+    <link rel="stylesheet" href="{% static 'onboarding/css/style.css' %}">
+</head>
+<body>
+
+<div class="site">
+
+<header class="header">
+    <div class="site-name">Driver Onboarding</div>
+
+    <nav class="header-links">
+        <a href="{% url 'dashboard' %}">Dashboard</a>
+        <a href="{% url 'sign_out' %}">Sign Out</a>
+    </nav>
+</header>
+
+<main class="dashboard-content">
+    <h1>Welcome, {{ application.full_name }}</h1>
+    <p class="subtitle">Here is the current status of your driver application.</p>
+
+    <section class="dashboard-card">
+        <h2>My Application</h2>
+
+        <table class="dashboard-table">
+            <tr>
+                <td>Transport Type</td>
+                <td>{{ application.transport|title }}</td>
+            </tr>
+
+            <tr>
+                <td>Registration Plate</td>
+                <td>{{ application.registration_plate|default:"Not added yet" }}</td>
+            </tr>
+
+            <tr>
+                <td>Status</td>
+                <td>
+                    {% if application.status == "Submitted" %}
+                        <span class="badge badge-review">Under review</span>
+                    {% elif application.status == "Approved" %}
+                        <span class="badge badge-approved">Approved</span>
+                    {% elif application.status == "Rejected" %}
+                        <span class="badge badge-rejected">Rejected</span>
+                    {% else %}
+                        <span class="badge badge-draft">Draft</span>
+                    {% endif %}
+                </td>
+            </tr>
+
+            {% if application.submitted_at %}
+                <tr>
+                    <td>Submitted On</td>
+                    <td>{{ application.submitted_at|date:"d M Y" }}</td>
+                </tr>
+            {% endif %}
+        </table>
+
+        {% if application.status == "Draft" %}
+            <p class="small-note">
+                Your application is incomplete. Continue from where you stopped.
+            </p>
+
+            {% if application.current_step <= 3 %}
+                <a class="btn btn-blue" href="{% url 'vehicle_details' %}">
+                    Resume Application
+                </a>
+            {% elif application.current_step == 4 %}
+                <a class="btn btn-blue" href="{% url 'documents' %}">
+                    Resume Application
+                </a>
+            {% else %}
+                <a class="btn btn-blue" href="{% url 'review_application' %}">
+                    Resume Application
+                </a>
+            {% endif %}
+
+        {% elif application.status == "Submitted" %}
+            <p class="small-note">
+                Your application is currently under review.
+                We will notify you by email once a decision has been made.
+            </p>
+
+        {% elif application.status == "Approved" %}
+            <p class="small-note">
+                Your driver application has been approved.
+            </p>
+
+        {% elif application.status == "Rejected" %}
+            <p class="small-note">
+                Your application was rejected.
+            </p>
+            <p>
+                <strong>Reason:</strong>
+                {{ application.rejection_reason }}
+            </p>
+        {% endif %}
+
+    </section>
+</main>
+
+</div>
+
+</body>
+</html>

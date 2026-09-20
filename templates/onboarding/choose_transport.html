@@ -1,0 +1,96 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choose Transport</title>
+    <link rel="stylesheet" href="{% static 'onboarding/css/style.css' %}">
+</head>
+<body>
+
+<div class="site">
+<header class="header">
+    <div class="site-name">Driver Onboarding</div>
+</header>
+<main class="content">
+<div class="steps">
+<div class="step active">
+    <div class="step-number">1</div>
+    <small>Transport</small>
+</div>
+<div class="step ">
+    <div class="step-number">2</div>
+    <small>Personal Details</small>
+</div>
+<div class="step ">
+    <div class="step-number">3</div>
+    <small>Vehicle Details</small>
+</div>
+<div class="step ">
+    <div class="step-number">4</div>
+    <small>Photos & Documents</small>
+</div>
+<div class="step ">
+    <div class="step-number">5</div>
+    <small>Review</small>
+</div>
+</div>
+
+<h1 class="page-title">Choose Your Transport</h1>
+<p class="subtitle">Select the type of vehicle you will use for deliveries.</p>
+
+{% if error %}
+<div class="messages"><p>{{ error }}</p></div>
+{% endif %}
+
+<form method="post">
+{% csrf_token %}
+
+<div class="transport-grid">
+
+    <label class="transport-card">
+        <input type="radio" name="transport" value="motorcycle"
+               {% if selected_transport == "motorcycle" %}checked{% endif %}>
+        <img src="{% static 'onboarding/images/motorcycle.png' %}" alt="Motorcycle">
+        <div class="radio-look"></div>
+        <p>Motorcycle</p>
+    </label>
+
+    <label class="transport-card">
+        <input type="radio" name="transport" value="car"
+               {% if selected_transport == "car" %}checked{% endif %}>
+        <img src="{% static 'onboarding/images/car.png' %}" alt="Car">
+        <div class="radio-look"></div>
+        <p>Car</p>
+    </label>
+
+    <label class="transport-card">
+        <input type="radio" name="transport" value="van"
+               {% if selected_transport == "van" %}checked{% endif %}>
+        <img src="{% static 'onboarding/images/van.png' %}" alt="Van">
+        <div class="radio-look"></div>
+        <p>Van</p>
+    </label>
+
+    <label class="transport-card">
+        <input type="radio" name="transport" value="truck"
+               {% if selected_transport == "truck" %}checked{% endif %}>
+        <img src="{% static 'onboarding/images/truck.png' %}" alt="Truck">
+        <div class="radio-look"></div>
+        <p>Truck</p>
+    </label>
+
+</div>
+
+<div class="actions">
+    <button type="button" class="btn btn-light" onclick="history.back()">Back</button>
+    <button type="submit" class="btn btn-blue">Next</button>
+</div>
+
+</form>
+</main>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,148 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photos and Documents</title>
+    <link rel="stylesheet" href="{% static 'onboarding/css/style.css' %}">
+</head>
+<body>
+
+<div class="site">
+<header class="header">
+    <div class="site-name">Driver Onboarding</div>
+</header>
+<main class="content">
+<div class="steps">
+<div class="step done">
+    <div class="step-number">1</div>
+    <small>Transport</small>
+</div>
+<div class="step done">
+    <div class="step-number">2</div>
+    <small>Personal Details</small>
+</div>
+<div class="step done">
+    <div class="step-number">3</div>
+    <small>Vehicle Details</small>
+</div>
+<div class="step active">
+    <div class="step-number">4</div>
+    <small>Photos & Documents</small>
+</div>
+<div class="step ">
+    <div class="step-number">5</div>
+    <small>Review</small>
+</div>
+</div>
+
+<h1 class="page-title">Photos and Documents</h1>
+<p class="subtitle">
+    Upload clear JPG or PNG images. Maximum file size is 5 MB.
+</p>
+
+{% if messages %}
+<div class="messages">
+    {% for message in messages %}<p>{{ message }}</p>{% endfor %}
+</div>
+{% endif %}
+
+<form method="post" enctype="multipart/form-data">
+{% csrf_token %}
+
+<div class="docs-grid">
+
+    <div class="doc-card">
+        <h3>Front Vehicle Photo</h3>
+        {% if application.front_vehicle_photo %}
+            <img src="{{ application.front_vehicle_photo.url }}" alt="Front vehicle">
+        {% else %}
+            <img id="front_preview" hidden alt="Front vehicle preview">
+        {% endif %}
+        <input type="file" name="front_vehicle_photo"
+               accept=".jpg,.jpeg,.png,image/jpeg,image/png"
+               onchange="previewDoc(this,'front_preview')"
+               {% if not application.front_vehicle_photo %}required{% endif %}>
+    </div>
+
+    <div class="doc-card">
+        <h3>Rear Vehicle Photo</h3>
+        {% if application.rear_vehicle_photo %}
+            <img src="{{ application.rear_vehicle_photo.url }}" alt="Rear vehicle">
+        {% else %}
+            <img id="rear_preview" hidden alt="Rear vehicle preview">
+        {% endif %}
+        <input type="file" name="rear_vehicle_photo"
+               accept=".jpg,.jpeg,.png,image/jpeg,image/png"
+               onchange="previewDoc(this,'rear_preview')"
+               {% if not application.rear_vehicle_photo %}required{% endif %}>
+    </div>
+
+    <div class="doc-card">
+        <h3>Cargo Area Photo</h3>
+        {% if application.cargo_area_photo %}
+            <img src="{{ application.cargo_area_photo.url }}" alt="Cargo area">
+        {% else %}
+            <img id="cargo_preview" hidden alt="Cargo area preview">
+        {% endif %}
+        <input type="file" name="cargo_area_photo"
+               accept=".jpg,.jpeg,.png,image/jpeg,image/png"
+               onchange="previewDoc(this,'cargo_preview')"
+               {% if not application.cargo_area_photo %}required{% endif %}>
+        <p class="small-note">
+            For motorcycles, upload the delivery box or carrying area.
+        </p>
+    </div>
+
+    <div class="doc-card">
+        <h3>Vehicle Registration Document</h3>
+        {% if application.vehicle_registration_document %}
+            <img src="{{ application.vehicle_registration_document.url }}"
+                 alt="Vehicle registration document">
+        {% else %}
+            <img id="registration_preview" hidden alt="Registration preview">
+        {% endif %}
+        <input type="file" name="vehicle_registration_document"
+               accept=".jpg,.jpeg,.png,image/jpeg,image/png"
+               onchange="previewDoc(this,'registration_preview')"
+               {% if not application.vehicle_registration_document %}required{% endif %}>
+    </div>
+
+    <div class="doc-card">
+        <h3>Applicant Portrait</h3>
+        {% if application.applicant_portrait %}
+            <img src="{{ application.applicant_portrait.url }}" alt="Applicant portrait">
+        {% else %}
+            <img id="portrait_preview" hidden alt="Portrait preview">
+        {% endif %}
+        <input type="file" name="applicant_portrait"
+               accept=".jpg,.jpeg,.png,image/jpeg,image/png"
+               onchange="previewDoc(this,'portrait_preview')"
+               {% if not application.applicant_portrait %}required{% endif %}>
+    </div>
+
+</div>
+
+<div class="actions">
+    <button type="button" class="btn btn-light" onclick="history.back()">Back</button>
+    <button type="submit" class="btn btn-blue">Next</button>
+</div>
+
+</form>
+</main>
+</div>
+
+<script>
+function previewDoc(input, id) {
+    const image = document.getElementById(id);
+
+    if (image && input.files && input.files[0]) {
+        image.src = URL.createObjectURL(input.files[0]);
+        image.hidden = false;
+    }
+}
+</script>
+
+</body>
+</html>

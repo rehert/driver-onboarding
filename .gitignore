@@ -1,0 +1,23 @@
+# Python virtual environment
+.venv/
+venv/
+
+# Python temporary files
+__pycache__/
+*.py[cod]
+
+# Django local database
+db.sqlite3
+
+# Uploaded documents/images
+media/
+
+# Environment variables and secrets
+.env
+.env.*
+
+# PyCharm settings
+.idea/
+
+# Static files generated during deployment
+staticfiles/

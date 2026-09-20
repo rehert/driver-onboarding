@@ -1,0 +1,270 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Details</title>
+    <link rel="stylesheet" href="{% static 'onboarding/css/style.css' %}">
+</head>
+<body>
+
+<div class="site">
+<header class="header">
+    <div class="site-name">Driver Onboarding</div>
+</header>
+<main class="content">
+<div class="steps">
+<div class="step done">
+    <div class="step-number">1</div>
+    <small>Transport</small>
+</div>
+<div class="step active">
+    <div class="step-number">2</div>
+    <small>Personal Details</small>
+</div>
+<div class="step ">
+    <div class="step-number">3</div>
+    <small>Vehicle Details</small>
+</div>
+<div class="step ">
+    <div class="step-number">4</div>
+    <small>Photos & Documents</small>
+</div>
+<div class="step ">
+    <div class="step-number">5</div>
+    <small>Review</small>
+</div>
+</div>
+
+<h1 class="page-title">Personal Details</h1>
+<p class="subtitle">Please enter your personal details and verify your email.</p>
+
+{% if messages %}
+<div class="messages">
+    {% for message in messages %}<p>{{ message }}</p>{% endfor %}
+</div>
+{% endif %}
+
+<form method="POST" enctype="multipart/form-data">
+{% csrf_token %}
+
+<div class="two-col">
+
+    <div class="field">
+        <label>Full Name</label>
+        <input type="text" name="Full_name" value="{{ Full_name }}" required>
+    </div>
+
+    <div class="field">
+        <label>Country of Origin</label>
+        <input type="text" name="Country" value="{{ Country }}" required>
+    </div>
+
+    <div class="field">
+        <label>Date of Birth</label>
+        <input type="date" id="date_of_birth"
+               name="Date_of_Birth" value="{{ Date_of_Birth }}" required>
+    </div>
+
+    <div class="field">
+        <label>City of Birth</label>
+        <input type="text" name="City" value="{{ City }}" required>
+    </div>
+
+    <div class="field">
+        <label>Age</label>
+        <div class="age-box"><span id="age_display">-</span></div>
+    </div>
+
+    <div class="field">
+        <label>ID Photo</label>
+        <div class="upload-inline">
+            <input type="file" name="id_number"
+                   accept=".png,.jpeg,.jpg"
+                   onchange="previewFile(this,'id_preview')" required>
+            <img id="id_preview" class="upload-preview" hidden alt="ID preview">
+        </div>
+    </div>
+
+    <div class="field">
+        <label>Phone Number</label>
+        <input type="text" name="Phone_number"
+               value="{{ Phone_number }}" required>
+    </div>
+
+    <div class="field">
+        <label>Driving Licence Photo</label>
+        <div class="upload-inline">
+            <input type="file" name="license_photo"
+                   accept=".png,.jpeg,.jpg"
+                   onchange="previewFile(this,'licence_preview')" required>
+            <img id="licence_preview" class="upload-preview" hidden alt="Licence preview">
+        </div>
+    </div>
+
+    <div class="field">
+        <label>Email Address</label>
+        <div class="inline">
+            <input type="email" name="Email" value="{{ Email }}" required>
+            <button type="submit" name="action" value="send_otp"
+                    class="btn btn-green" formnovalidate>
+                Verify Email
+            </button>
+        </div>
+    </div>
+
+    <div class="field">
+        <label>Licence Class</label>
+        <select name="license_class" required>
+            <option value="">Choose Licence Class</option>
+            <option value="1" {% if license_class == "1" %}selected{% endif %}>Class 1</option>
+            <option value="2" {% if license_class == "2" %}selected{% endif %}>Class 2</option>
+            <option value="3" {% if license_class == "3" %}selected{% endif %}>Class 3</option>
+            <option value="4" {% if license_class == "4" %}selected{% endif %}>Class 4</option>
+        </select>
+    </div>
+
+    <div class="field">
+        <label>Verification Code</label>
+        <div class="inline">
+            <input type="text" name="otp" maxlength="6" inputmode="numeric">
+            <button type="submit" name="action" value="verify_otp"
+                    class="btn btn-green" formnovalidate>
+                Confirm Code
+            </button>
+        </div>
+
+        {% if email_verified %}
+            <p class="verified">✓ Email successfully verified.</p>
+        {% endif %}
+
+        <p class="small-note">
+            Code expires in
+            <span id="countdown">{{ otp_seconds_remaining|default:0 }}</span>
+            seconds
+        </p>
+
+        <p id="otp_expired_message" class="error-text"></p>
+    </div>
+
+    <div class="field">
+        <label>Password</label>
+        <input type="password" id="password" name="password" required>
+    </div>
+
+    <div class="field">
+        <label>Confirm Password</label>
+        <input type="password" id="confirm_password"
+               name="confirm password" required>
+
+        <label class="show-password">
+            <input type="checkbox" id="show_passwords">
+            Show passwords
+        </label>
+
+        <p id="password_error" class="error-text"></p>
+    </div>
+
+</div>
+
+<div class="actions">
+    <button type="button" class="btn btn-light" onclick="history.back()">Back</button>
+    <button type="submit" name="action" value="complete_step2"
+            class="btn btn-blue">Next</button>
+</div>
+
+</form>
+</main>
+</div>
+
+<script>
+const dobInput = document.getElementById("date_of_birth");
+const ageDisplay = document.getElementById("age_display");
+
+function calculateAge() {
+    if (!dobInput.value) {
+        ageDisplay.textContent = "-";
+        return;
+    }
+
+    const birthDate = new Date(dobInput.value + "T00:00:00");
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+
+    const monthDifference = today.getMonth() - birthDate.getMonth();
+
+    if (
+        monthDifference < 0 ||
+        (monthDifference === 0 && today.getDate() < birthDate.getDate())
+    ) {
+        age--;
+    }
+
+    ageDisplay.textContent = age;
+}
+
+dobInput.addEventListener("change", calculateAge);
+calculateAge();
+
+const password = document.getElementById("password");
+const confirmPassword = document.getElementById("confirm_password");
+const passwordError = document.getElementById("password_error");
+
+function checkPasswords() {
+    if (confirmPassword.value && password.value !== confirmPassword.value) {
+        passwordError.textContent = "Passwords do not match.";
+        confirmPassword.setCustomValidity("Passwords do not match");
+    } else {
+        passwordError.textContent = "";
+        confirmPassword.setCustomValidity("");
+    }
+}
+
+password.addEventListener("input", checkPasswords);
+confirmPassword.addEventListener("input", checkPasswords);
+
+document.getElementById("show_passwords").addEventListener("change", function () {
+    const type = this.checked ? "text" : "password";
+    password.type = type;
+    confirmPassword.type = type;
+});
+
+let secondsRemaining =
+    Number("{{ otp_seconds_remaining|default:0 }}");
+
+const countdown = document.getElementById("countdown");
+const expiredMessage = document.getElementById("otp_expired_message");
+let countdownTimer = null;
+
+function updateCountdown() {
+    countdown.textContent = Math.max(0, secondsRemaining);
+
+    if (secondsRemaining > 0) {
+        expiredMessage.textContent = "";
+        secondsRemaining--;
+    } else {
+        expiredMessage.textContent =
+            "Verification code expired. Please request a new code.";
+
+        if (countdownTimer !== null) {
+            clearInterval(countdownTimer);
+        }
+    }
+}
+
+updateCountdown();
+countdownTimer = setInterval(updateCountdown, 1000);
+
+function previewFile(input, id) {
+    const image = document.getElementById(id);
+
+    if (input.files && input.files[0]) {
+        image.src = URL.createObjectURL(input.files[0]);
+        image.hidden = false;
+    }
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,35 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Submitted</title>
+    <link rel="stylesheet" href="{% static 'onboarding/css/style.css' %}">
+</head>
+<body>
+
+<div class="site">
+<header class="header">
+    <div class="site-name">Driver Onboarding</div>
+</header>
+
+<main class="success">
+    <div class="check">✓</div>
+
+    <h1>Application Submitted Successfully!</h1>
+
+    <p>
+        Application submitted successfully.
+        Your application is under review.
+        We will notify you by email once a decision has been made.
+    </p>
+
+    <a class="btn btn-blue" href="{% url 'dashboard' %}">
+        Go to Dashboard
+    </a>
+</main>
+</div>
+
+</body>
+</html>

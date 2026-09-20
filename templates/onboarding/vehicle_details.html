@@ -1,0 +1,106 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Details</title>
+    <link rel="stylesheet" href="{% static 'onboarding/css/style.css' %}">
+</head>
+<body>
+
+<div class="site">
+<header class="header">
+    <div class="site-name">Driver Onboarding</div>
+</header>
+<main class="content">
+<div class="steps">
+<div class="step done">
+    <div class="step-number">1</div>
+    <small>Transport</small>
+</div>
+<div class="step done">
+    <div class="step-number">2</div>
+    <small>Personal Details</small>
+</div>
+<div class="step active">
+    <div class="step-number">3</div>
+    <small>Vehicle Details</small>
+</div>
+<div class="step ">
+    <div class="step-number">4</div>
+    <small>Photos & Documents</small>
+</div>
+<div class="step ">
+    <div class="step-number">5</div>
+    <small>Review</small>
+</div>
+</div>
+
+<h1 class="page-title">Vehicle Details</h1>
+<p class="subtitle">Please enter the details of the vehicle you will be using.</p>
+
+{% if messages %}
+<div class="messages">
+    {% for message in messages %}<p>{{ message }}</p>{% endfor %}
+</div>
+{% endif %}
+
+<form method="post">
+{% csrf_token %}
+
+<div class="vehicle-grid">
+    <div class="field">
+        <label>Registration Plate</label>
+        <input type="text" name="reg_plate"
+               value="{{ application.registration_plate }}" required>
+    </div>
+
+    <div class="field">
+        <label>Vehicle Colour</label>
+        <input type="text" name="colour"
+               value="{{ application.vehicle_colour }}" required>
+    </div>
+
+    <div class="field">
+        <label>Vehicle Make</label>
+        <input type="text" name="make"
+               value="{{ application.vehicle_make }}" required>
+    </div>
+
+    <div class="field">
+        <label>Year</label>
+        <input type="number" name="year" min="1980" max="2026"
+               value="{{ application.vehicle_year|default:'' }}" required>
+    </div>
+
+    <div class="field">
+        <label>Vehicle Model</label>
+        <input type="text" name="model"
+               value="{{ application.vehicle_model }}" required>
+    </div>
+
+    <div class="field">
+        <label>Country of Operation</label>
+        <input type="text" name="country"
+               value="{{ application.country_of_operation }}" required>
+    </div>
+
+    <div class="field">
+        <label>City of Operation</label>
+        <input type="text" name="city"
+               value="{{ application.city_of_work }}" required>
+    </div>
+</div>
+
+<div class="actions">
+    <button type="button" class="btn btn-light" onclick="history.back()">Back</button>
+    <button type="submit" class="btn btn-blue">Next</button>
+</div>
+
+</form>
+</main>
+</div>
+
+</body>
+</html>

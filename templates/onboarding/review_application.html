@@ -1,0 +1,157 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review Application</title>
+    <link rel="stylesheet" href="{% static 'onboarding/css/style.css' %}">
+</head>
+<body>
+
+<div class="site">
+<header class="header">
+    <div class="site-name">Driver Onboarding</div>
+</header>
+<main class="content">
+<div class="steps">
+<div class="step done">
+    <div class="step-number">1</div>
+    <small>Transport</small>
+</div>
+<div class="step done">
+    <div class="step-number">2</div>
+    <small>Personal Details</small>
+</div>
+<div class="step done">
+    <div class="step-number">3</div>
+    <small>Vehicle Details</small>
+</div>
+<div class="step done">
+    <div class="step-number">4</div>
+    <small>Photos & Documents</small>
+</div>
+<div class="step active">
+    <div class="step-number">5</div>
+    <small>Review</small>
+</div>
+</div>
+
+<h1 class="page-title">Review Your Application</h1>
+<p class="subtitle">Please check your information carefully before submitting.</p>
+
+{% if messages %}
+<div class="messages">
+    {% for message in messages %}<p>{{ message }}</p>{% endfor %}
+</div>
+{% endif %}
+
+{% if missing_fields %}
+<div class="messages">
+    <p>
+        Application incomplete:
+        {% for field in missing_fields %}
+            {{ field }}{% if not forloop.last %}, {% endif %}
+        {% endfor %}
+    </p>
+</div>
+{% endif %}
+
+<div class="review-grid">
+
+    <section class="review-card">
+        <a class="edit-link" href="{% url 'edit_personal_details' %}">Edit</a>
+        <h2>Personal Details</h2>
+
+        <div class="review-row"><span>Name</span><span>{{ application.full_name }}</span></div>
+        <div class="review-row"><span>Date of Birth</span><span>{{ application.date_of_birth }} (Age {{ age }})</span></div>
+        <div class="review-row"><span>Phone</span><span>{{ application.contact_info }}</span></div>
+        <div class="review-row"><span>Email</span><span>{{ application.user.email }}</span></div>
+        <div class="review-row"><span>Country of Origin</span><span>{{ application.country_of_origin }}</span></div>
+        <div class="review-row"><span>City of Birth</span><span>{{ application.city }}</span></div>
+        <div class="review-row"><span>Licence Class</span><span>{{ application.licence_class }}</span></div>
+
+        <div class="preview-grid">
+            {% if application.id_photo %}
+                <img src="{{ application.id_photo.url }}" alt="ID photo">
+            {% endif %}
+
+            {% if application.licence_photo %}
+                <img src="{{ application.licence_photo.url }}" alt="Driving licence">
+            {% endif %}
+        </div>
+    </section>
+
+    <section class="review-card">
+        <a class="edit-link" href="{% url 'vehicle_details' %}">Edit</a>
+        <h2>Vehicle Details</h2>
+
+        <div class="review-row"><span>Transport</span><span>{{ application.transport|title }}</span></div>
+        <div class="review-row"><span>Registration Plate</span><span>{{ application.registration_plate }}</span></div>
+        <div class="review-row"><span>Make</span><span>{{ application.vehicle_make }}</span></div>
+        <div class="review-row"><span>Model</span><span>{{ application.vehicle_model }}</span></div>
+        <div class="review-row"><span>Colour</span><span>{{ application.vehicle_colour }}</span></div>
+        <div class="review-row"><span>Year</span><span>{{ application.vehicle_year }}</span></div>
+        <div class="review-row"><span>Country of Operation</span><span>{{ application.country_of_operation }}</span></div>
+        <div class="review-row"><span>City of Operation</span><span>{{ application.city_of_work }}</span></div>
+    </section>
+
+    <section class="review-card">
+        <a class="edit-link" href="{% url 'documents' %}">Edit</a>
+        <h2>Photos and Documents</h2>
+
+        <div class="preview-grid">
+            {% if application.front_vehicle_photo %}
+                <img src="{{ application.front_vehicle_photo.url }}" alt="Front vehicle">
+            {% endif %}
+            {% if application.rear_vehicle_photo %}
+                <img src="{{ application.rear_vehicle_photo.url }}" alt="Rear vehicle">
+            {% endif %}
+            {% if application.cargo_area_photo %}
+                <img src="{{ application.cargo_area_photo.url }}" alt="Cargo area">
+            {% endif %}
+            {% if application.vehicle_registration_document %}
+                <img src="{{ application.vehicle_registration_document.url }}" alt="Registration document">
+            {% endif %}
+            {% if application.applicant_portrait %}
+                <img src="{{ application.applicant_portrait.url }}" alt="Applicant portrait">
+            {% endif %}
+        </div>
+    </section>
+
+    <section class="review-card">
+        <h2>Terms and Conditions</h2>
+
+        <p class="small-note">
+            Your information and uploaded documents will be used to assess
+            your application. Authorised reviewers may manually compare your
+            portrait, ID photo and driving licence photo.
+        </p>
+
+        <form class="terms" method="POST" action="{% url 'submit_application' %}">
+            {% csrf_token %}
+
+            <label>
+                <input type="checkbox" name="terms_accepted" required>
+                <span>
+                    I confirm that the information I provided is accurate
+                    and I accept the terms and conditions.
+                </span>
+            </label>
+
+            <div class="actions">
+                <button type="button" class="btn btn-light" onclick="history.back()">Back</button>
+                <button type="submit" class="btn btn-green"
+                        {% if missing_fields %}disabled{% endif %}>
+                    Submit Application
+                </button>
+            </div>
+        </form>
+    </section>
+
+</div>
+</main>
+</div>
+
+</body>
+</html>

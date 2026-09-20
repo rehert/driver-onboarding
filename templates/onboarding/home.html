@@ -1,0 +1,42 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driver Onboarding</title>
+    <link rel="stylesheet" href="{% static 'onboarding/css/style.css' %}">
+</head>
+<body class="home-page">
+
+<div class="home-wrap">
+    <section class="home-card">
+        <h1>Courier Driver Registration</h1>
+
+        <p class="lead">
+            Apply to become a delivery driver or sign in to continue
+            an existing application.
+        </p>
+
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="home-actions">
+            <a href="{% url 'choose_transport' %}" class="btn btn-blue">
+                Apply as a Driver
+            </a>
+
+            <a href="{% url 'sign_in' %}" class="btn btn-outline">
+                Sign In
+            </a>
+        </div>
+    </section>
+</div>
+
+</body>
+</html>

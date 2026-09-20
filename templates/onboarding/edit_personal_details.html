@@ -1,0 +1,136 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Personal Details</title>
+    <link rel="stylesheet" href="{% static 'onboarding/css/style.css' %}">
+</head>
+<body>
+
+<div class="site">
+<header class="header">
+    <div class="site-name">Driver Onboarding</div>
+</header>
+<main class="content">
+
+<h1 class="page-title">Edit Personal Details</h1>
+<p class="subtitle">Update your information before submitting your application.</p>
+
+{% if messages %}
+<div class="messages">
+    {% for message in messages %}<p>{{ message }}</p>{% endfor %}
+</div>
+{% endif %}
+
+<form method="POST" enctype="multipart/form-data">
+{% csrf_token %}
+
+<div class="two-col">
+
+    <div class="field">
+        <label>Full Name</label>
+        <input type="text" name="Full_name"
+               value="{{ application.full_name }}" required>
+    </div>
+
+    <div class="field">
+        <label>Country of Origin</label>
+        <input type="text" name="Country"
+               value="{{ application.country_of_origin }}" required>
+    </div>
+
+    <div class="field">
+        <label>Date of Birth</label>
+        <input type="date" name="Date_of_Birth"
+               value="{{ application.date_of_birth|date:'Y-m-d' }}" required>
+    </div>
+
+    <div class="field">
+        <label>City of Birth</label>
+        <input type="text" name="City"
+               value="{{ application.city }}" required>
+    </div>
+
+    <div class="field">
+        <label>Phone Number</label>
+        <input type="text" name="Phone_number"
+               value="{{ application.contact_info }}" required>
+    </div>
+
+    <div class="field">
+        <label>Licence Class</label>
+        <select name="license_class" required>
+            <option value="1" {% if application.licence_class == "1" %}selected{% endif %}>Class 1</option>
+            <option value="2" {% if application.licence_class == "2" %}selected{% endif %}>Class 2</option>
+            <option value="3" {% if application.licence_class == "3" %}selected{% endif %}>Class 3</option>
+            <option value="4" {% if application.licence_class == "4" %}selected{% endif %}>Class 4</option>
+        </select>
+    </div>
+
+    <div class="field">
+        <label>Email Address</label>
+        <div class="inline">
+            <input type="email" name="Email"
+                   value="{{ application.user.email }}" required>
+            <button type="submit" name="action" value="send_otp"
+                    class="btn btn-green" formnovalidate>
+                Verify New Email
+            </button>
+        </div>
+    </div>
+
+    <div class="field">
+        <label>Verification Code</label>
+        <div class="inline">
+            <input type="text" name="otp" maxlength="6" inputmode="numeric">
+            <button type="submit" name="action" value="verify_otp"
+                    class="btn btn-green" formnovalidate>
+                Confirm Code
+            </button>
+        </div>
+    </div>
+
+    <div class="field">
+        <label>Replace ID Photo (optional)</label>
+        {% if application.id_photo %}
+            <div class="upload-inline">
+                <img src="{{ application.id_photo.url }}"
+                     class="upload-preview" alt="Current ID photo">
+                <input type="file" name="id_number" accept=".png,.jpeg,.jpg">
+            </div>
+        {% else %}
+            <input type="file" name="id_number" accept=".png,.jpeg,.jpg">
+        {% endif %}
+    </div>
+
+    <div class="field">
+        <label>Replace Licence Photo (optional)</label>
+        {% if application.licence_photo %}
+            <div class="upload-inline">
+                <img src="{{ application.licence_photo.url }}"
+                     class="upload-preview" alt="Current licence photo">
+                <input type="file" name="license_photo" accept=".png,.jpeg,.jpg">
+            </div>
+        {% else %}
+            <input type="file" name="license_photo" accept=".png,.jpeg,.jpg">
+        {% endif %}
+    </div>
+
+</div>
+
+<div class="actions">
+    <button type="button" class="btn btn-light" onclick="history.back()">Back</button>
+    <button type="submit" name="action" value="save_personal"
+            class="btn btn-blue">
+        Save Changes
+    </button>
+</div>
+
+</form>
+</main>
+</div>
+
+</body>
+</html>
