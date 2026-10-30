@@ -68,12 +68,12 @@ allowed_hosts_environment = os.environ.get(
 ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
-    "driver-onboarding-production.up.railway.app",
-]
-CSRF_TRUSTED_ORIGINS = [
-    "https://driver-onboarding-production.up.railway.app",
+    ".onrender.com",
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://*.onrender.com",
+]
 
 # ============================================================
 # 5. INSTALLED APPLICATIONS
